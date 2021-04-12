@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :real_state do
     name { 'some_name' }
-    type { 'house' }
+    property_type { "house" }
     street { 'some_street_name' }
     external_number { '123' }
     internal_number { '456' }

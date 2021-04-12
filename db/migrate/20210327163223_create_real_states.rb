@@ -2,7 +2,7 @@ class CreateRealStates < ActiveRecord::Migration[6.0]
   def change
     create_table :real_states do |t|
       t.string :name
-      t.string :type
+      t.integer :property_type
       t.string :street
       t.string :external_number
       t.string :internal_number

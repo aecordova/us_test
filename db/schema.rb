@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 2021_03_27_163223) do
 
   create_table "real_states", force: :cascade do |t|
     t.string "name"
-    t.string "type"
+    t.integer "property_type"
     t.string "street"
     t.string "external_number"
     t.string "internal_number"
