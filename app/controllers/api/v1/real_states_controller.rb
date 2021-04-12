@@ -17,6 +17,14 @@ class Api::V1::RealStatesController < ApplicationController
     end
   end
 
+  def update
+    if real_state.update(real_state_params)
+      render json: { data: real_state }, status: :ok
+    else
+      head :unprocessable_entity
+    end
+  end
+
   def destroy
     if real_state.destroy
       head :ok

@@ -61,6 +61,42 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
     end
   end
 
+  describe 'real state #update' do
+    before { patch "/api/v1/real_states/#{property.id}", params: params }
+    let(:property) { create(:real_state) }
+
+    context 'with valid_information' do
+      let(:params) { { real_state: { name: 'new_property_name' } } }
+
+      it 'updates record' do
+        expect(property.reload.name).to eql('new_property_name')
+      end
+
+      it 'contains the attributes of the created record on the response body' do
+        expected_attributes = attributes_for(:real_state, name: 'new_property_name')
+        expect(json_response['data']).to include_json(expected_attributes)
+      end
+
+      it 'responds with a :ok status code' do
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'with invalid information' do
+      let(:params) do
+        {
+          real_state: {
+            external_number: "!@\#$#",
+          }
+        }
+      end
+
+      it 'responds with status :unprocessable_entity' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
   describe 'real_state #show' do
     let(:property) { create(:real_state) }
 
