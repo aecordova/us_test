@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :real_state do
     name { 'some_name' }
-    property_type { "house" }
+    property_type { 'house' }
     street { 'some_street_name' }
     external_number { '123' }
     internal_number { '456' }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'rspec/json_expectations'
 
@@ -32,7 +34,7 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
             property_type: 'house',
             street: 'some_random_street',
             external_number: "!@\#$#",
-            internal_number: "@#{$@}%",
+            internal_number: "@#{$ERROR_POSITION}%",
             neighborhood: 'some_hood',
             city: 'some_city',
             country: 'XX',
@@ -86,7 +88,7 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
       let(:params) do
         {
           real_state: {
-            external_number: "!@\#$#",
+            external_number: "!@\#$#"
           }
         }
       end

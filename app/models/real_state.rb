@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RealState < ApplicationRecord
   COUNTRY_CODES = ISO3166::Country.all.map(&:alpha2)
 
@@ -7,14 +9,16 @@ class RealState < ApplicationRecord
     with: /([a-zA-Z0-9\-]+)/, message: 'only allows alfanumeric and dashes'
   }
   validates :internal_number, presence: true, if: -> { %w[department commercial_ground].include?(property_type) }
-  validates :internal_number, format: { 
+  validates :internal_number, format: {
     with: /([a-zA-Z0-9\- ]+)/, message: 'only allows alfanumeric, dashes and spaces'
   }
   validates :neighborhood, presence: true, length: { maximum: 128 }
   validates :city, presence: true, length: { maximum: 64 }
   validates :country, presence: true, inclusion: { in: COUNTRY_CODES }
   validates :rooms, numericality: true
-  validates :bathrooms, numericality: { greater_than: 0 }, unless: -> { %w[land commercial_ground].include?(property_type) }
+  validates :bathrooms, numericality: { greater_than: 0 }, unless: lambda {
+                                                                     %w[land commercial_ground].include?(property_type)
+                                                                   }
   validates :bathrooms, presence: true
   validates :comments, length: { maximum: 128 }
 
