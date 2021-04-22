@@ -8,7 +8,8 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
     before { post '/api/v1/real_states', params: params }
 
     context 'with valid_information' do
-      let(:params) { { real_state: attributes_for(:real_state) } }
+      let(:expected_attributes){ attributes_for(:real_state) }
+      let(:params) { { real_state: expected_attributes } }
 
       it 'creates a real state record' do
         created_record_id = json_response.dig('data', 'id')
@@ -17,7 +18,6 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
       end
 
       it 'contains the attributes of the created record on the response body' do
-        expected_attributes = attributes_for(:real_state)
         expect(json_response['data']).to include_json(expected_attributes)
       end
 
@@ -33,8 +33,8 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
             name: nil,
             property_type: 'house',
             street: 'some_random_street',
-            external_number: "!@\#$#",
-            internal_number: "@#{$ERROR_POSITION}%",
+            external_number: "!@$#",
+            internal_number: "@#%",
             neighborhood: 'some_hood',
             city: 'some_city',
             country: 'XX',
@@ -65,7 +65,8 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
 
   describe 'real state #update' do
     before { patch "/api/v1/real_states/#{property.id}", params: params }
-    let(:property) { create(:real_state) }
+    let(:expected_attributes){attributes_for(:real_state)}
+    let(:property) { create(:real_state, expected_attributes) }
 
     context 'with valid_information' do
       let(:params) { { real_state: { name: 'new_property_name' } } }
@@ -75,8 +76,9 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
       end
 
       it 'contains the attributes of the created record on the response body' do
-        expected_attributes = attributes_for(:real_state, name: 'new_property_name')
-        expect(json_response['data']).to include_json(expected_attributes)
+        expect(json_response['data']).to include_json(
+          expected_attributes.merge(name: 'new_property_name')
+        )
       end
 
       it 'responds with a :ok status code' do
@@ -100,13 +102,13 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
   end
 
   describe 'real_state #show' do
-    let(:property) { create(:real_state) }
+    let(:expected_attributes){attributes_for(:real_state)}
+    let(:property) { create(:real_state, expected_attributes) }
 
     context 'with a valid id in params' do
       before { get "/api/v1/real_states/#{property.id}" }
 
       it 'returns the requested record information' do
-        expected_attributes = attributes_for(:real_state)
         expect(json_response['data']).to include_json(expected_attributes)
       end
     end
@@ -120,18 +122,20 @@ RSpec.describe 'Api::V1::RealStates', type: :request do
   end
 
   describe 'real_state #index' do
+    let(:attributes) { attributes_for(:real_state) } 
+    
     before do
-      create(:real_state, name: 'property 1')
-      create(:real_state, name: 'property 2')
+      create(:real_state, attributes.merge(name: 'property 1'))
+      create(:real_state, attributes.merge(name: 'property 2'))
 
       get '/api/v1/real_states', headers: { 'ACCEPT' => 'application/json' }
     end
 
     it 'returns a list of real states with certain attributes' do
       expected_object = { 'name' => 'property 1',
-                          'property_type' => 'house',
-                          'city' => 'somecity',
-                          'country' => 'MX' }
+                          'property_type' => attributes[:property_type],
+                          'city' => attributes[:city],
+                          'country' => attributes[:country] }
 
       expect(json_response['data'].first).to match(expected_object)
       expect(json_response['data'].size).to eql(2)
